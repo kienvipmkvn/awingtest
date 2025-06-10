@@ -31,11 +31,16 @@ namespace TreasureHuntApi.Models
 
                 if (cordinatesByKey[pindex].Count == 0)
                 {
-                    throw new Exception($"No coordinates found for key {pindex + 1}");
+                    throw new Exception($"No coordinates found for key {pindex}");
                 }
             }
 
-            //dp[k, cordinate] = minimun fuel needed to reach key k from cordinate 
+            if (cordinatesByKey[p].Count > 1)
+            {
+                throw new Exception($"Too many key {p}");
+            }
+
+            //dp[k][cordinate] = minimun fuel needed to reach key k at cordinate 
             var dp = new List<Dictionary<(int x, int y), (double cost, (int prevX, int prevY)?)>>();
 
             for (int k = 0; k <= p; k++)
@@ -52,12 +57,12 @@ namespace TreasureHuntApi.Models
                 dp[1][cordinate] = (Distance((0, 0), cordinate), (0, 0));
             }
 
-            for (int k = 1; k <= p; k++)
+            for (int k = 2; k <= p; k++)
             {
                 foreach (var curr in cordinatesByKey[k])
                 {
                     double minCost = double.MaxValue;
-                    (int, int) prevCordinate = (0, 0);
+                    (int, int)? prevCordinate = null;
                     foreach (var prev in cordinatesByKey[k - 1])
                     {
                         if (!dp[k - 1].ContainsKey(prev))
@@ -79,25 +84,15 @@ namespace TreasureHuntApi.Models
                 }
             }
 
-            // Find the minimum cost at the last key
-            double minTotal = double.MaxValue;
-            (int x, int y) last = (0, 0);
-            foreach (var kv in dp[p])
-            {
-                if (kv.Value.cost < minTotal)
-                {
-                    minTotal = kv.Value.cost;
-                    last = kv.Key;
-                }
-            }
-
             // Reconstruct path
             var path = new List<(int x, int y)>();
-            (int x, int y)? currPos = last;
-            for (int k = p; k >= 0 && currPos != null; k--)
+            (int x, int y) lastCordinate = cordinatesByKey[p][0];
+            (int x, int y)? currCordinate = lastCordinate;
+            var minTotal = dp[p][lastCordinate].cost;
+            for (int k = p; k >= 0; k--)
             {
-                path.Add(currPos.Value);
-                currPos = dp[k][currPos.Value].Item2;
+                path.Add(currCordinate.Value);
+                currCordinate = dp[k][currCordinate.Value].Item2;
             }
             path.Reverse();
 

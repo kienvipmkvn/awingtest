@@ -72,10 +72,15 @@ app.MapGet("/api/treasurehunt/submissions", async (TreasureHuntContext db) =>
 {
     var submissions = await db.Inputs.ToListAsync();
     var results = await db.Results.ToListAsync();
-    var list = submissions.Select(i => new {
-        i.Id, i.N, i.M, i.P, i.Matrix,
+    var list = submissions.Select(i => new
+    {
+        i.Id,
+        i.N,
+        i.M,
+        i.P,
+        i.Matrix,
         Result = results.FirstOrDefault(r => r.InputId == i.Id)
-    });
+    }).OrderByDescending(i => i.Id);
     return Results.Ok(list);
 });
 
