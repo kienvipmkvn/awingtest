@@ -3,10 +3,8 @@
 # Node.js/React frontend
 treasure-hunt-frontend/node_modules/
 treasure-hunt-frontend/build/
-treasure-hunt-frontend/.env
 
 dist/
-.env
 *.log
 
 # OS generated files
