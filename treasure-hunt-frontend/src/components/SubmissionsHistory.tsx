@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert } from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert, Button } from '@mui/material';
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
@@ -18,7 +18,11 @@ type Submission = {
   } | null;
 };
 
-const SubmissionsHistory: React.FC = () => {
+type SubmissionsHistoryProps = {
+  onApply: (n: number, m: number, p: number, matrix: number[][]) => void;
+};
+
+const SubmissionsHistory: React.FC<SubmissionsHistoryProps> = ({ onApply }) => {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +58,7 @@ const SubmissionsHistory: React.FC = () => {
                 <TableCell>Matrix</TableCell>
                 <TableCell>Min Fuel</TableCell>
                 <TableCell>Path</TableCell>
+                <TableCell>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -68,6 +73,11 @@ const SubmissionsHistory: React.FC = () => {
                   </TableCell>
                   <TableCell>{sub.result?.minFuel?.toFixed(4) ?? '-'}</TableCell>
                   <TableCell>{sub.result?.path ?? '-'}</TableCell>
+                  <TableCell>
+                    <Button variant="outlined" size="small" onClick={() => onApply(sub.n, sub.m, sub.p, sub.matrix)}>
+                      Apply
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

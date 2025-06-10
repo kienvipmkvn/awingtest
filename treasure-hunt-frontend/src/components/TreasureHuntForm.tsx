@@ -1,23 +1,35 @@
-import React, { useState } from 'react';
-import { Box, Button, Grid, TextField, Typography, Paper, Alert, CircularProgress } from '@mui/material';
+import React from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
 });
 
-const defaultN = 3, defaultM = 3, defaultP = 2;
-
 type ResultType = { minFuel: number; path: string };
 
-const TreasureHuntForm: React.FC = () => {
-  const [n, setN] = useState<number>(defaultN);
-  const [m, setM] = useState<number>(defaultM);
-  const [p, setP] = useState<number>(defaultP);
-  const [matrix, setMatrix] = useState<number[][]>(Array(defaultN).fill(0).map(() => Array(defaultM).fill(0)));
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<ResultType | null>(null);
-  const [loading, setLoading] = useState(false);
+type TreasureHuntFormProps = {
+  n: number;
+  setN: React.Dispatch<React.SetStateAction<number>>;
+  m: number;
+  setM: React.Dispatch<React.SetStateAction<number>>;
+  p: number;
+  setP: React.Dispatch<React.SetStateAction<number>>;
+  matrix: number[][];
+  setMatrix: React.Dispatch<React.SetStateAction<number[][]>>;
+};
+
+const TreasureHuntForm: React.FC<TreasureHuntFormProps> = ({ n, setN, m, setM, p, setP, matrix, setMatrix }) => {
+  const [error, setError] = React.useState<string | null>(null);
+  const [result, setResult] = React.useState<ResultType | null>(null);
+  const [loading, setLoading] = React.useState(false);
 
   // Update matrix size when n, m change
   React.useEffect(() => {
@@ -27,7 +39,7 @@ const TreasureHuntForm: React.FC = () => {
       );
       return newMatrix;
     });
-  }, [n, m]);
+  }, [n, m, setMatrix]);
 
   const handleMatrixChange = (i: number, j: number, value: string) => {
     const num = Number(value);
