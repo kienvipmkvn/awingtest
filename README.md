@@ -1,3 +1,5 @@
+## Most of the development was accelerated with AI assistance, but I ensured that all the core logic and problem-solving aspects were my own work.
+
 ## Backend Setup (ASP.NET Core)
 1. Open a terminal and navigate to the `TreasureHuntApi` directory:
    ```sh
